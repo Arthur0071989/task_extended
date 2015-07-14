@@ -132,11 +132,15 @@ void handle_login(const char* msg, size_t len, int fd)
 	//		* add user to user list
 	//		* send ack "1.0" if user added, send nack otherwise
 	read(fd, (*msg), len);
-	add(user_list *ul, user *u);
+	user_list *ul = create_ul(2);
+	ul->add(ul, 0);
+
+	//add(user_list *ul, user *u);
 
 }
 
 void handle_userlist(const char* msg, size_t len, int fd)
 {
 	//TODO
+
 }
