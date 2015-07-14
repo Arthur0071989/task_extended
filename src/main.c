@@ -11,11 +11,13 @@
 
 
 
+
+/* struktura uzytkownikow */
 struct user {
 	int fd;
 	char *nick;
 };
-
+/* wstawka z funkcja odczytu protokolu */
 size_t receive_msg(char** msg, int fd){
 	size_t len = 0;
 	read(fd, &len, sizeof(size_t));
@@ -110,9 +112,10 @@ int main(int argc, const char *argv[])
 
                 }
             } else {
+            	/* odczyt wiadomosci */
             	es[i].data.f;
             	char *msg = 0;
-            	size_t len = receive.msg(&msg, es[i].data.f);
+            	size_t len = receive_msg(&msg, es[i].data.f);
             	if(len > 0)
             		if(msg[0] =='2')
             			handle_login(msg, len, es[i].data.f);
