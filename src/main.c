@@ -9,6 +9,23 @@
 
 #define BUFF_SIZE 1024
 
+
+
+struct user {
+	int fd;
+	char *nick;
+};
+
+size_t receive_msg(char** msg, int fd){
+	size_t len = 0;
+	read(fd, &len, sizeof(size_t));
+	(*msg) = malloc((len+1)* sizeof(char));
+	(*msg)[len] = 0;
+	read(fd, (*msg), len);
+	return len;
+}
+
+
 int main(int argc, const char *argv[])
 {
     int i = 0;
@@ -90,8 +107,17 @@ int main(int argc, const char *argv[])
                     close(epoll_fd);
                     close(srv_fd);
                     return 1;
+
                 }
             } else {
+            	es[i].data.f;
+            	char *msg = 0;
+            	size_t len = receive.msg(&msg, es[i].data.f);
+            	if(len > 0)
+            		if(msg[0] =='2')
+            			handle_login(msg, len, es[i].data.f);
+            		else if(msg[0] == '6')
+            			handle_userlist(msg, len, es[i].data.f);
                 if (es[i].events & EPOLLIN) {
                     msg_len = read(cli_fd, buff, BUFF_SIZE);
                     if (msg_len > 0) {
