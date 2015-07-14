@@ -6,19 +6,14 @@
 #include <sys/types.h>
 #include <sys/epoll.h>
 #include <arpa/inet.h>
+#include "user_list.h"
 
 #define BUFF_SIZE 1024
 
 
-
-
-/* struktura uzytkownikow */
-struct user {
-	int fd;
-	char *nick;
-};
 /* wstawka z funkcja odczytu protokolu */
-size_t receive_msg(char** msg, int fd){
+size_t receive_msg(char** msg, int fd)
+{
 	size_t len = 0;
 	read(fd, &len, sizeof(size_t));
 	(*msg) = malloc((len+1)* sizeof(char));
@@ -27,12 +22,12 @@ size_t receive_msg(char** msg, int fd){
 	return len;
 }
 
+void handle_login(const char* msg, size_t len, int fd);
+void handle_userlist(const char* msg, size_t len, int fd);
 
 int main(int argc, const char *argv[])
 {
     int i = 0;
-    char buff[BUFF_SIZE];
-    ssize_t msg_len = 0;
 
     int srv_fd = -1;
     int cli_fd = -1;
@@ -113,22 +108,15 @@ int main(int argc, const char *argv[])
                 }
             } else {
             	/* odczyt wiadomosci */
-            	es[i].data.f;
-            	char *msg = 0;
-            	size_t len = receive_msg(&msg, es[i].data.f);
-            	if(len > 0)
-            		if(msg[0] =='2')
-            			handle_login(msg, len, es[i].data.f);
-            		else if(msg[0] == '6')
-            			handle_userlist(msg, len, es[i].data.f);
                 if (es[i].events & EPOLLIN) {
-                    msg_len = read(cli_fd, buff, BUFF_SIZE);
-                    if (msg_len > 0) {
-                        write(cli_fd, buff, msg_len);
-                    }
-                    close(cli_fd);
-                    epoll_ctl(epoll_fd, EPOLL_CTL_DEL, cli_fd, &e);
-                    cli_fd = -1;
+                	char *msg = 0;
+                	size_t len = receive_msg(&msg, es[i].data.fd);
+                	if(len > 0) {
+                		if(msg[0] =='2')
+                			handle_login(msg, len, es[i].data.fd);
+                		else if(msg[0] == '6')
+                			handle_userlist(msg, len, es[i].data.fd);
+                	}
                 }
             }
         }
@@ -137,3 +125,18 @@ int main(int argc, const char *argv[])
 	return 0;
 }
 
+void handle_login(const char* msg, size_t len, int fd)
+{
+	//TODO:
+	//		* read nick from message
+	//		* add user to user list
+	//		* send ack "1.0" if user added, send nack otherwise
+	read(fd, (*msg), len);
+	add(user_list *ul, user *u);
+
+}
+
+void handle_userlist(const char* msg, size_t len, int fd)
+{
+	//TODO
+}

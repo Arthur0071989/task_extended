@@ -21,7 +21,11 @@ user_list * create_ul(size_t size){
 	res->ctx->size = size;
 	res->ctx->users = malloc(size* sizeof(users*));
 	memset(res->ctx->users, 0, (size*sizeof(user*)));
-	//set metohod pointers here
+
+	res->add = add;
+	res->find_by_fd = find_by_fd;
+	res->rm_by_fd = rm_by_fd;
+
 	return res;
 }
 
@@ -63,3 +67,15 @@ static int add(user_list *ul, user *u){
 	return 1;  //there is no place
 }
 
+static int rm_by_fd(user_list *ul, int fd){
+	size_t i = 0;
+	for (; i<ul->ctx; ++i){
+		if(ul->ctx->users[i] && (ul->ctx->users[i]->fd)==fd){
+			free(ul->ctx->users[i]->nick);
+			free(ul->ctx->users[i]);
+			ul->ctx->users[i] = 0;
+			return 0;
+		}
+	}
+	return 1; //user not found
+}
