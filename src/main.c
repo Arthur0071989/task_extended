@@ -54,7 +54,7 @@ int main(int argc, const char *argv[])
 
     srv_addr.sin_family = AF_INET;
     srv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    srv_addr.sin_port = htons(5558);
+    srv_addr.sin_port = htons(5553);
     if (bind(srv_fd, (struct sockaddr*) &srv_addr, sizeof(srv_addr)) < 0) {
         printf("Cannot bind socket\n");
         close(srv_fd);
@@ -149,7 +149,6 @@ void client_service(int cli_fd, uint32_t events, int epoll_fd)
 		len = receive_msg(&msg, cli_fd);
 		if(len > 0) {
 			if(msg[0] =='2') {
-				printf("ok");
 				if_clear_client = handle_login(msg, len, cli_fd);
 			}
 			else if(msg[0] == '6') {
@@ -165,7 +164,7 @@ void client_service(int cli_fd, uint32_t events, int epoll_fd)
 
 void clear_client(int cli_fd, int epoll_fd)
 {
-	//TODO remove user from the list
+	//remove user from the list
 	epoll_ctl(epoll_fd, EPOLL_CTL_DEL, cli_fd, 0);
 	close(cli_fd);
 }
@@ -198,7 +197,7 @@ int handle_login(const char* msg, size_t len, int fd)
 		/* send ack "1.0" if user added, send nack otherwise */
 		result = send_acknack(fd, 0, 0);
 	} else {
-		result = send_acknack(fd, 1, "Cannot add user, nick already exists or server is full");
+		result = send_acknack(fd, 1, "\nCannot add user, nick already exists or server is full");
 	}
 
 	return result;
@@ -208,11 +207,18 @@ int handle_userlist(const char* msg, size_t len, int fd)
 {
 	char* msg_ulr = 0;
 	size_t msg_ulr_len = 0;
+	u = malloc(sizeof(user));
+	u->fd = fd;
+	u->nick = nick;
+	USER_LIST->get_all_names(USER,LIST,u);
 
+	msg_ulr = malloc((msg_ulr_len+1) * sizeof(char));
+
+	//
 	//TODO
 	//		* get users from user list
 	//		* prepare message user list reply
-	//		* send message user list reply
+	//		* send message user list reply to client
 
 	return send_msg(fd, msg_ulr, msg_ulr_len);
 }

@@ -84,3 +84,24 @@ static int rm_by_fd(user_list *ul, int fd){
 	}
 	return 1; //user not found
 }
+
+static char** get_all_names(user_list* self, size_t *size) {
+	char **result = 0;
+	size_t users_cnt = 0;
+	size_t i = 0;
+	size_t offset = 0;
+	for(; i<self->ctx->users[i]; ++i)
+		if(self->ctx->users[i]) ++users_cnt;
+	*size = users_cnt;
+	if (users_cnt) {
+		result = malloc(users_cnt *sizeof(char));
+		for(i=0; i<self->ctx->size; ++i){
+			if(self->ctx->users[i]){
+				result[offset] = malloc((strlen(self->ctx->users[i]->nick)+1)*sizeof(char));
+				strcpy(result[offset], self->ctx->users[i]->nick);
+				++offset;
+			}
+		}
+	}
+	return result;
+}
