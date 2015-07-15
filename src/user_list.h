@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 /*  user_list                               */
 
 typedef struct user {
@@ -5,7 +7,7 @@ typedef struct user {
 	char * nick;
 }user;
 
-typedef struct ul_ct ul_ctx;
+typedef struct ul_ctx ul_ctx;
 
 typedef struct user_list {
 	ul_ctx * ctx;
